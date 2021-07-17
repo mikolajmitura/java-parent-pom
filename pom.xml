@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+		 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>pl.jalokim.parentpom</groupId>
+        <artifactId>root-parent-pom</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>java-parent-pom</artifactId>
+    <packaging>pom</packaging>
+    <version>${main-version}.${minor-version}</version>
+
+    <properties>
+        <main-version>1.0</main-version>
+        <minor-version>0-SNAPSHOT</minor-version>
+
+        <!-- required to override -->
+        <release.project.name>parent pom with checking code style</release.project.name>
+        <release.project.description>parent pom with checking code style based on rules from code-style-rules module</release.project.description>
+        <release.project.repository-name>java-parent-pom</release.project.repository-name>
+        <archunit.package.to.verify>pl.jalokim</archunit.package.to.verify>
+
+        <!-- not required to override -->
+        <code-style-rules.version>RELEASE</code-style-rules.version>
+        <code-style.base-dir>${project.basedir}/target/code-style-rules</code-style.base-dir>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <version>${plugin.remote.resources.version}</version>
+                <executions>
+                    <execution>
+                        <id>process-shared-resources</id>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <configuration>
+                            <resourceBundles>
+                                <resourceBundle>pl.jalokim.coderules:code-style-rules:${code-style-rules.version}
+                                </resourceBundle>
+                            </resourceBundles>
+                            <outputDirectory>${code-style.base-dir}</outputDirectory>
+                            <attachToMain>false</attachToMain>
+                            <encoding>UTF-8</encoding>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.societegenerale.commons</groupId>
+                <artifactId>arch-unit-maven-plugin</artifactId>
+                <version>${plugin.arch-unit.version}</version>
+                <configuration>
+                    <projectPath>${project.basedir}/target</projectPath>
+                    <rules>
+                        <configurableRules>
+                            <configurableRule>
+                                <rule>pl.jalokim.coderules.archunit.GeneralCodingArchRules</rule>
+                                <applyOn>
+                                    <packageName>${archunit.package.to.verify}</packageName>
+                                    <scope>main</scope>
+                                </applyOn>
+                            </configurableRule>
+                            <configurableRule>
+                                <rule>pl.jalokim.coderules.archunit.MandatoryAnnotationArchRules</rule>
+                                <applyOn>
+                                    <packageName>${archunit.package.to.verify}</packageName>
+                                    <scope>main</scope>
+                                </applyOn>
+                            </configurableRule>
+                            <configurableRule>
+                                <rule>pl.jalokim.coderules.archunit.NamingConventionArchRules</rule>
+                                <applyOn>
+                                    <packageName>${archunit.package.to.verify}</packageName>
+                                    <scope>main</scope>
+                                </applyOn>
+                            </configurableRule>
+                            <configurableRule>
+                                <rule>pl.jalokim.coderules.archunit.IntegrationTestArchRules</rule>
+                                <applyOn>
+                                    <packageName>${archunit.package.to.verify}</packageName>
+                                    <scope>test</scope>
+                                </applyOn>
+                            </configurableRule>
+                        </configurableRules>
+                    </rules>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>arch-test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>pl.jalokim.coderules</groupId>
+                        <artifactId>code-style-rules</artifactId>
+                        <version>${code-style-rules.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+</project>
