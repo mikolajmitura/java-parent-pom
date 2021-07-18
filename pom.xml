@@ -27,7 +27,7 @@
 
         <!-- not required to override -->
         <code-style-rules.version>RELEASE</code-style-rules.version>
-        <code-style.base-dir>${project.basedir}/target/code-style-rules</code-style.base-dir>
+        <code-style.base-dir>${project.build.directory}/code-style-rules</code-style.base-dir>
     </properties>
 
     <build>
