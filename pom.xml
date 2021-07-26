@@ -17,7 +17,7 @@
 
     <properties>
         <main-version>1.0</main-version>
-        <minor-version>1-SNAPSHOT</minor-version>
+        <minor-version>1</minor-version>
 
         <!-- required to override -->
         <release.project.name>parent pom with checking code style</release.project.name>
